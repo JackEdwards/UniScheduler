@@ -13,8 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        MainWindow.cpp
+        MainWindow.cpp \
+    Task.cpp \
+    TaskListModel.cpp
 
-HEADERS  += MainWindow.hpp
+HEADERS  += MainWindow.hpp \
+    Task.hpp \
+    TaskListModel.hpp
 
 FORMS    += MainWindow.ui
+
+CONFIG += c++11
