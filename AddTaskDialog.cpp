@@ -21,6 +21,6 @@ void AddTaskDialog::on_buttonBox_accepted()
 
     MainWindow* mainWindow = static_cast<MainWindow*>(parent());
 
-    mainWindow->AddTask(Task(content, module, date));
+    mainWindow->AddTask(Task(content, module, date, false));
     mainWindow->UpdateCheckBoxes();
 }

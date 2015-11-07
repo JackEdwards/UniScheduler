@@ -15,12 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     Task.cpp \
-    TaskListModel.cpp \
     AddTaskDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     Task.hpp \
-    TaskListModel.hpp \
     AddTaskDialog.hpp
 
 FORMS    += MainWindow.ui \

@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget* parent) :
     mp_ui(new Ui::MainWindow)
 {
     mp_ui->setupUi(this);
+    m_taskFilePath = QCoreApplication::applicationDirPath() + "/tasks.xml";
+
     statusBar()->showMessage("Tasks can be added by right clicking on a date in the calendar!");
 
     LoadTasksFromFile();
@@ -20,6 +22,8 @@ MainWindow::MainWindow(QWidget* parent) :
 MainWindow::~MainWindow()
 {
     delete mp_ui;
+
+    SaveTasksToFile();
 }
 
 void MainWindow::AddTask(const Task& task)
@@ -43,6 +47,8 @@ void MainWindow::UpdateCheckBoxes()
         for (Task& task : m_taskMap[selectedDate])
         {
             QCheckBox* checkBox = new QCheckBox(task.GetContent(), mp_ui->taskListFrame);
+            checkBox->setChecked(task.IsComplete());
+            connect(checkBox, SIGNAL(clicked(bool)), this, SLOT(updateComplete(bool)));
             mp_ui->taskListFrame->layout()->addWidget(checkBox);
             checkBox->show();
         }
@@ -51,7 +57,7 @@ void MainWindow::UpdateCheckBoxes()
 
 void MainWindow::LoadTasksFromFile()
 {
-    QFile file(":tasks.xml");
+    QFile file(m_taskFilePath);
 
     if (file.open(QIODevice::ReadOnly))
     {
@@ -67,13 +73,11 @@ void MainWindow::LoadTasksFromFile()
                 {
                     QDate date = QDate::fromString(reader.attributes().value("date").toString(), Qt::ISODate);
                     QString module = reader.attributes().value("module").toString();
+                    QString completeText = reader.attributes().value("complete").toString();
+                    bool complete = completeText == "true" ? true : false;
                     QString content = reader.readElementText();
 
-                    m_taskMap[date].push_back(Task(content, module, date));
-
-                    qDebug() << "Date: " << date.toString();
-                    qDebug() << "Module: " << module;
-                    qDebug() << "Content: " << content;
+                    m_taskMap[date].push_back(Task(content, module, date, complete));
                 }
             }
         }
@@ -81,7 +85,49 @@ void MainWindow::LoadTasksFromFile()
         file.close();
 
         if (reader.hasError())
-            qDebug() << "Error: " << reader.errorString();
+            qDebug() << "XML reader error: " << reader.errorString();
+    }
+}
+
+void MainWindow::SaveTasksToFile()
+{
+    QFile file(m_taskFilePath);
+
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QXmlStreamWriter writer(&file);
+        writer.setAutoFormatting(true);
+
+        writer.writeStartDocument();
+        writer.writeStartElement("Tasks");
+
+        QMap<QDate, QVector<Task> >::const_iterator i;
+        for (i = m_taskMap.begin(); i != m_taskMap.end(); ++i)
+        {
+            for (const Task& task : i.value())
+            {
+                if (task.IsComplete())
+                    qDebug() << "True!";
+
+                QString completeText = task.IsComplete() ? "true" : "false";
+
+                writer.writeStartElement("Task");
+                writer.writeAttribute("date", task.GetDate().toString(Qt::ISODate));
+                writer.writeAttribute("module", task.GetModule());
+                writer.writeAttribute("complete", completeText);
+                writer.writeCharacters(task.GetContent());
+                writer.writeEndElement();
+            }
+        }
+
+        writer.writeEndElement();
+        writer.writeEndDocument();
+
+        file.close();
+    }
+    else
+    {
+        qDebug() << "Could not open file.";
     }
 }
 
@@ -99,7 +145,14 @@ void MainWindow::customMenuRequested(QPoint point)
 
 void MainWindow::addTask()
 {
-    qDebug() << "Task added!";
     AddTaskDialog* dialog = new AddTaskDialog(this);
     dialog->exec();
+}
+
+void MainWindow::updateComplete(bool checked)
+{
+    if (checked)
+        qDebug() << "Checked";
+    else
+        qDebug() << "Unchecked";
 }

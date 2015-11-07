@@ -12,7 +12,7 @@
 #include <QLayout>
 #include <QActionGroup>
 #include <QTableView>
-#include "TaskListModel.hpp"
+#include "Task.hpp"
 #include "AddTaskDialog.hpp"
 
 namespace Ui
@@ -28,6 +28,7 @@ private:
     Ui::MainWindow* mp_ui;
     QMap<QDate, QVector<Task> > m_taskMap;
     QAction* mp_addTaskAction;
+    QString m_taskFilePath;
 
 public:
     explicit MainWindow(QWidget* parent = 0);
@@ -36,10 +37,12 @@ public:
     void UpdateCheckBoxes();
 private:
     void LoadTasksFromFile();
+    void SaveTasksToFile();
 private slots:
     void on_taskCalendar_selectionChanged();
     void customMenuRequested(QPoint point);
     void addTask();
+    void updateComplete(bool checked);
 };
 
 #endif
