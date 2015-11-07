@@ -1,2 +1,5 @@
-<RCC/>
-
+<RCC>
+    <qresource prefix="/">
+        <file>tasks.xml</file>
+    </qresource>
+</RCC>

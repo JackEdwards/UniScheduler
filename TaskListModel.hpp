@@ -13,6 +13,7 @@ public:
     enum ColumnType
     {
         Content = 0,
+        Module,
         Date,
         ColumnCount
     };

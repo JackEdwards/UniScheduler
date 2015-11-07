@@ -37,6 +37,11 @@ QVariant TaskListModel::data(const QModelIndex& index, int role) const
         case ColumnType::Content:
             return m_tasks[row].GetContent();
             break;
+
+        case ColumnType::Module:
+            return m_tasks[row].GetModule();
+            break;
+
         case ColumnType::Date:
             return m_tasks[row].GetDate();
             break;
@@ -66,6 +71,11 @@ bool TaskListModel::setData(const QModelIndex& index, const QVariant& value, int
         case ColumnType::Content:
             m_tasks[row].SetContent(value.toString());
             break;
+
+        case ColumnType::Module:
+            m_tasks[row].SetModule(value.toString());
+            break;
+
         case ColumnType::Date:
             m_tasks[row].SetDate(value.toDate());
             break;

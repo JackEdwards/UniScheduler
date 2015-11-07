@@ -15,12 +15,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     Task.cpp \
-    TaskListModel.cpp
+    TaskListModel.cpp \
+    AddTaskDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     Task.hpp \
-    TaskListModel.hpp
+    TaskListModel.hpp \
+    AddTaskDialog.hpp
 
-FORMS    += MainWindow.ui
+FORMS    += MainWindow.ui \
+    AddTaskDialog.ui
 
 CONFIG += c++11
+
+RESOURCES += \
+    Resources.qrc
